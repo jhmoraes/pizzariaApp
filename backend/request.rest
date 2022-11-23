@@ -1,0 +1,47 @@
+
+###CRIAR PIZZA tabela teste
+POST http://localhost:3003/product/api/test
+Content-Type: application/json
+
+{
+    "id":2,
+    "pizza": "camarao"
+}
+
+
+###CRIAR PIZZA
+POST http://localhost:3003/product/api/newpizza
+Content-Type: application/json
+
+{
+    "pizza": "alho",
+    "preco": 30,
+    "ingredientes": "muçarela, ovo, pimentão, tomate, oregano"
+}
+
+###TODOS OS PRODUTOS
+GET http://localhost:3003/product/api/products
+Content-Type: application/json
+
+
+
+###PIZZA POR ID
+GET http://localhost:3003/product/api/products/fd37c232-bb39-416e-8b3a-f79612c5c0ab
+
+
+###CRIAR PEDIDO
+POST http://localhost:3003/order/api/neworder
+Content-Type: application/json
+
+{
+    "idProduct": ["abdb9286-cc68-4e54-a7f2-c440c12bda13"]
+}
+
+###TODOS OS pedidos
+GET http://localhost:3003/order/api/allorder
+Content-Type: application/json
+
+
+###PEDIDOS POR ID
+GET http://localhost:3003/order/api/order/313020bf-fbaf-4207-992e-166bd513e997
+Content-Type: application/json

@@ -26,7 +26,7 @@ export class OrderController {
 
             if (!Array.isArray(idProduct)) {
                 throw new isNotArray("itens")
-            }
+            } 
 
             const id: string = this.idGenerator.generateId()
 

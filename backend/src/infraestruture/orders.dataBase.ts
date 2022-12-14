@@ -7,7 +7,8 @@ import { IOrderDataBase } from "./common/ports/repositories/repository.interface
 export class OrderDataBase extends connectionDataBase implements IOrderDataBase{
     
     public createOrder = async(id:string, idProduct:string[]):Promise<void> =>{
-
+        console.log('no data')
+        console.log('id data', idProduct)
         const id_order = id
 
         await OrderDataBase.connection('order_table')

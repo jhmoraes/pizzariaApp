@@ -11,5 +11,16 @@ export const OrderPageContainer = styled.div`
 export const MainContainer = styled.div`
    height: 80vh;
    overflow: auto;
+
+   span{
+    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-weight: 700;
+    font-size: 1.2em;
+   }
    
 `
+

@@ -12,7 +12,7 @@ const CardProduct = (props) => {
     return (
         <CardProductContainer>
             <p>{product.pizza}</p>
-            <p>Preço: R$ {product.preco}</p>
+            <p> {isButtonIncluir ? "" : "Total:"} R$ {isButtonIncluir ? product.preco : product.total}</p>
             <p>Ingedientes: {product.ingredientes}</p>
             {isButtonIncluir ?
                 <ButtonIncluir>

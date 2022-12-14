@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import GlobalStateContext from "./GlobalStateContext"
 import { BASE_URL_PRODUCT, BASE_URL_ORDER } from '../constants/BASE_URL'
-
+import { LOCAL_STOREGE_CART } from '../constants/BASE_CONSTANTS'
 
 
 const GlobalState = (props) => {
-
 
     const [allProductItem, setAllProductItem] = useState([])
     const [allOrder, setAllOrder] = useState([])
@@ -19,12 +18,12 @@ const GlobalState = (props) => {
     const [inputIngrediente, setInputIngrediente] = useState()
     const [msgUser, setMsgUser] = useState()
     const [msgErr, setMsgErr] = useState()
-    const idList = []
+    const [msgConfirm, setMsgConfirm] = useState()
+    const listToCart = []
 
     useEffect(() => {
         allProducts()
     }, [])
-
 
     /********* REQUISIÇÕES AXIOS ******/
 
@@ -38,7 +37,6 @@ const GlobalState = (props) => {
             })
     }
 
-
     const getAllOrders = () => {
         axios.get(`${BASE_URL_ORDER}/allorder`)
             .then((resp) => {
@@ -48,26 +46,45 @@ const GlobalState = (props) => {
                 setMsgErr(err)
             })
     }
-    
+
     const postNewProduct = () => {
         const body = {
             pizza: inputPizza,
             preco: inputPreco,
             ingredientes: inputIngrediente
         }
-        
+
         axios.post(`${BASE_URL_PRODUCT}/newpizza`, body)
-        .then((resp) => {
-            setMsgUser('Nova Pizza Cadastrada!')
-            setInputPizza('')
-            setInputPreco('')
-            setInputIngrediente('')
-        })
-        .catch((err) => {
-            setMsgErr(err)
-        })
+            .then((resp) => {
+                setMsgUser('Nova Pizza Cadastrada!')
+                setInputPizza('')
+                setInputPreco('')
+                setInputIngrediente('')
+            })
+            .catch((err) => {
+                setMsgErr(err)
+            })
     }
-    
+
+    const createOrder = (idProductCartString) => {
+
+        const body = {
+            idProduct: idProductCartString
+        }
+
+        axios.post(`${BASE_URL_ORDER}/neworder`, body)
+            .then((resp) => {
+                setMsgConfirm(resp.data)
+                localStorage.removeItem(LOCAL_STOREGE_CART)
+                saveToCartState()
+                setIsFinalizeOrder(false)
+            })
+            .catch((err) => {
+                setMsgErr(err)
+            })
+
+    }
+
     /********* FIM AXIOS ******/
 
 
@@ -76,17 +93,23 @@ const GlobalState = (props) => {
     const addItems = (pizzaName) => {
 
         for (let i = 0; i < cart.length; i++) {
-            cart[i].pizza === pizzaName && cart[i].quantity++
+            if (cart[i].pizza === pizzaName) {
+                cart[i].quantity++;
+                cart[i].total = cart[i].preco * cart[i].quantity
+            }
         }
 
         setOrderStorege(cart)
-        getOrderStorege()
+        saveToCartState()
     }
 
     const removeItems = (pizzaName) => {
 
         for (let i = 0; i < cart.length; i++) {
-            cart[i].pizza === pizzaName && cart[i].quantity--
+            if (cart[i].pizza === pizzaName) {
+                cart[i].quantity--;
+                cart[i].total -= cart[i].preco
+            }
 
             if (cart[i].quantity === 0) {
                 cart.splice(i, 1)
@@ -94,7 +117,7 @@ const GlobalState = (props) => {
         }
 
         setOrderStorege(cart)
-        getOrderStorege()
+        saveToCartState()
     }
 
     const orderListOrganization = () => {
@@ -123,62 +146,79 @@ const GlobalState = (props) => {
         setViewAllOrder(newAllOrder)
     }
 
-    //cria um array com o id e quantidade e guarda no localstorege
     const savedCart = (idProduct) => {
+        
+        const resultGetLocalStorege = getOrderStorege()
 
-        const itemProduct = allProductItem.filter((item) => item.id === idProduct)
+        if (resultGetLocalStorege !== null) {
+            let isFound = false
 
-        if (idList.length > 0) {
+            for (let item of resultGetLocalStorege) {
 
-            const idToCart = idList.filter((item) => {
                 if (item.id === idProduct) {
-                    return item
-                } else {
-                    return false
+                    isFound = true
+                    item.quantity++
+                    item.total = item.total + item.preco
                 }
-            })
+            }
 
-            if (idToCart.length === 0) {
-                const newProduct = {
+            if (!isFound) {
+
+                const itemProduct = allProductItem.filter((item) => item.id === idProduct)
+                resultGetLocalStorege.push({
                     ...itemProduct[0],
-                    quantity: 1
-                }
-                idList.push(newProduct)
-            } else {
-                idList.map((item) => {
-                    if (item.id === idProduct) {
-                        return { ...item, quantity: item.quantity++ }
-                    }
+                    quantity: 1,
+                    total: itemProduct[0].preco
                 })
+
+                setOrderStorege(resultGetLocalStorege)
+
+            } else {
+                setOrderStorege(resultGetLocalStorege)
             }
 
         } else {
+            const itemProduct = allProductItem.filter((item) => item.id === idProduct)
+
             const newProduct = {
                 ...itemProduct[0],
-                quantity: 1
+                quantity: 1,
+                total: itemProduct[0].preco
             }
-            idList.push(newProduct)
+            listToCart.push(newProduct)
+
+            setOrderStorege(listToCart)
         }
-        setOrderStorege(idList)
+       
     }
 
-    //converste e armazena no localStorege
     const setOrderStorege = (list) => {
         const convertStorege = JSON.stringify(list)
-        localStorage.setItem("ORDER_LIST", convertStorege)
+        localStorage.setItem(LOCAL_STOREGE_CART, convertStorege)
     }
 
-    //busca os pedidos no localStorege
     const getOrderStorege = () => {
-        const getListStorege = localStorage.getItem("ORDER_LIST")
+        const getListStorege = localStorage.getItem(LOCAL_STOREGE_CART)
         const listIdparseado = JSON.parse(getListStorege)
 
-        setCart(listIdparseado)
+        return listIdparseado
     }
 
-    const addToCart = () => { }
+    const saveToCartState = () => {
+        setCart(getOrderStorege())
+    }
 
-    const data = { allProductItem, savedCart, addToCart, getOrderStorege, cart, isButtonIncluir, setIsButtonIncluir, setIsFinalizeOrder, isFinalizeOrder, getAllOrders, allOrder, removeItems, addItems, orderListOrganization, viewAllOrder, setInputPizza, inputPizza, setInputPreco, inputPreco, setInputIngrediente, inputIngrediente, postNewProduct,  allProducts, msgUser }
+    const newOrder = () => {
+        let idProductCart = []
+        for (let item of cart) {
+            idProductCart.push(item.id)
+        }
+        const idProductCartString = idProductCart
+        createOrder(idProductCartString)
+    }
+
+
+    const data = { allProductItem, savedCart, getOrderStorege, cart, isButtonIncluir, setIsButtonIncluir, setIsFinalizeOrder, isFinalizeOrder, getAllOrders, allOrder, removeItems, addItems, orderListOrganization, viewAllOrder, setInputPizza, inputPizza, setInputPreco, inputPreco, setInputIngrediente, inputIngrediente, postNewProduct, allProducts, msgUser, newOrder, createOrder, saveToCartState, msgConfirm, setMsgConfirm }
     return (
         <GlobalStateContext.Provider value={data}>
             {props.children}

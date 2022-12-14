@@ -32,9 +32,6 @@ const CardOrder = (props) => {
     })
 
 
-
-
-
     return (
         <>
 

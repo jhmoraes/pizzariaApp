@@ -8,26 +8,21 @@ import Header from '../../components/Header/Header'
 
 const OrderPage = () => {
 
-    const { getOrderStorege, cart, setIsButtonIncluir, setIsFinalizeOrder } = useContext(GlobalStateContext)
+    const { cart, setIsButtonIncluir, setIsFinalizeOrder, saveToCartState, msgConfirm } = useContext(GlobalStateContext)
 
     useEffect(() => {
 
-        getOrderStorege()
+        saveToCartState()
         setIsButtonIncluir(false)
         setIsFinalizeOrder(true)
 
     }, [])
 
-
-    const renderProduct = cart.map((product, index) => {
-        return <CardProduct key={index} product={product} />
-    })
-
     return (
         <OrderPageContainer>
             <Header />
             <MainContainer>
-                {renderProduct && renderProduct ? <>{renderProduct}</> : <p>Carregando</p>}
+                {msgConfirm ? <span>{msgConfirm}</span> : cart === null || cart.length === 0 ? <span>Nenhum item no carrinho!</span> : cart.map((product, index) => { return <CardProduct key={index} product={product} /> })}
             </MainContainer>
             <FooterBar />
         </OrderPageContainer>

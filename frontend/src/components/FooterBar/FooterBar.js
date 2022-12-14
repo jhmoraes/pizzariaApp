@@ -11,7 +11,7 @@ const FooterBar = () => {
 
     const navigate = useNavigate()
 
-    const { isFinalizeOrder } = useContext(GlobalStateContext)
+    const { isFinalizeOrder, callbackOrder, createOrder, newOrder} = useContext(GlobalStateContext)
 
     //console.log("isFinalizeOrder", isFinalizeOrder)
     
@@ -26,7 +26,7 @@ const FooterBar = () => {
                 </IconHomeContainer >
 
                 {isFinalizeOrder ?
-                    <FinalizeOrderContainer>
+                    <FinalizeOrderContainer onClick={()=>newOrder()}>
                         <p>Finalizar Pedido</p>
                     </FinalizeOrderContainer>
                     :

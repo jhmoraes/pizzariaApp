@@ -1,0 +1,1 @@
+export const LOCAL_STOREGE_CART = "ORDER_LIST"

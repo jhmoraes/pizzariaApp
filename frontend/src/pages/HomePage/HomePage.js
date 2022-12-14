@@ -12,13 +12,16 @@ const HomePage = () => {
 
     const navigate = useNavigate()
 
-    const { setIsFinalizeOrder } = useContext(GlobalStateContext)
+    const { isFinalizeOrder, setIsFinalizeOrder, setMsgConfirm} = useContext(GlobalStateContext)
 
     useEffect(() => {
 
         setIsFinalizeOrder(false)
+        setMsgConfirm('')
 
     }, [])
+
+    console.log(isFinalizeOrder)
 
     return (
         <HomeContainer>

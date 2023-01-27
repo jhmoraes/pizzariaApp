@@ -3,7 +3,6 @@ import axios from "axios"
 import GlobalStateContext from "./GlobalStateContext"
 import { BASE_URL_PRODUCT, BASE_URL_ORDER } from '../constants/BASE_URL'
 import { LOCAL_STOREGE_CART } from '../constants/BASE_CONSTANTS'
-import { useQuery } from "react-query";
 
 
 const GlobalState = (props) => {

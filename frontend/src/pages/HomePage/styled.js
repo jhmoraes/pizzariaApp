@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-
-
 export const HomeContainer = styled.div`
   height: 100vh;
   border: 1px solid lightgray;
@@ -40,6 +38,8 @@ export const HomeMenu = styled.ul`
     align-items: center;
     cursor: pointer;
     padding: 0 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 `
 

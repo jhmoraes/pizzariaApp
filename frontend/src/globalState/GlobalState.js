@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import GlobalStateContext from "./GlobalStateContext"
-import { BASE_URL_PRODUCT, BASE_URL_ORDER } from '../constants/BASE_URL'
+import { BASE_URL_PRODUCT_END, BASE_URL_PRODUCT, BASE_URL_ORDER } from '../constants/BASE_URL'
 import { LOCAL_STOREGE_CART } from '../constants/BASE_CONSTANTS'
+import {http, funcTesteHttp} from '../http/http'
 import { useQuery } from "react-query";
+
 
 
 const GlobalState = (props) => {
@@ -28,6 +30,13 @@ const GlobalState = (props) => {
 
     /********* REQUISIÇÕES AXIOS ******/
 
+    /* const funcTesteHttp = async () => {
+        const getTeste = await http.get(`${BASE_URL_PRODUCT_END}/products`)
+        console.log(getTeste);
+    } */
+    
+    funcTesteHttp()
+    
     const allProducts = () => {
         axios.get(`${BASE_URL_PRODUCT}/products`)
             .then((resp) => {
